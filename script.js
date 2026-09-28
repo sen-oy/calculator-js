@@ -29,13 +29,20 @@ function operate (operandA, operandB, operator) {
     }
 }
 
-// functional variables
+// instantiating important variables
 let currentNumber = '';
-let firstOperand;
-let secondOperand;
-let currentOperator;
-let currentResult;
-let previousResult;
+let firstOperand = '';
+let secondOperand = '';
+let currentOperator = '';
+let currentResult = '';
+let previousResult = '';
+
+// a function to reset operators
+function resetOperators () {
+    firstOperand = '';
+    secondOperand = '';
+    currentOperator = '';
+}
 
 // get numbers from number buttons
 numberButtons.forEach((button) => {
@@ -45,202 +52,121 @@ numberButtons.forEach((button) => {
     })
 })
 
-function operatorButtonHandler (event) {
-    // there is no previous result
-    if (!previousResult) {
-        // if there is no number yet
-        if (!(firstOperand) && !(currentNumber)) {
-            viewVariables();
-            return;
-        } else if (((currentNumber != '') || (currentNumber != undefined)) && ((firstOperand == '') || (firstOperand == undefined))){
-            firstOperand = parseFloat(currentNumber);
-            currentNumber = ''; // update display later
-            currentOperator = event.target.textContent;
-            viewVariables();
-        } else if ((currentOperator != undefined || currentOperator != '') && ((firstOperand != '') || (firstOperand != undefined))) {
-            if (secondOperand != '' || secondOperand != undefined) {
-                currentResult = operate(firstOperand, secondOperand, event.target.textContent);
-                previousResult = currentResult;
-                currentResult = '';
-                currentNumber = '';
-                secondOperand = '';
-                currentOperator = '';
-                viewVariables();
-            } else if (secondOperand == '' || secondOperand == undefined) {
-                currentOperator = event.target.textContent;
-                secondOperand = parseFloat(currentNumber);
-                currentResult = operate(firstOperand, secondOperand, event.target.textContent);
-                previousResult = currentResult;
-                currentResult = '';
-                currentNumber = '';
-                firstOperand = '';
-                secondOperand = '';
-                currentOperator = '';
-                viewVariables();
-            }
-        }
-    }
-    // there is a previous result
-    else if (previousResult != undefined || previousResult != '') {
-        if (currentNumber == '' || currentNumber == undefined) {
-            viewVariables();
-            return;
-        } else if (currentNumber != '' || currentNumber != undefined) {
-            firstOperand = previousResult; 
-            secondOperand = parseFloat(currentNumber);
-            currentResult = operate(firstOperand, secondOperand, event.target.textContent);
-            previousResult = currentResult;
-            currentResult = '';
-            currentNumber = '';
-            firstOperand = '';
-            secondOperand = '';
-            currentOperator = '';
-            viewVariables();
-        }
-    }
+function operatorButtonHandler (e) {
+	let operation = e.target.textContent; // places the operator in a variable
+	// if there is no previous result => this is a first calculation
+	if (!previousResult) {
+		// check if there is a current number or first operand or current result
+		if ((currentResult) && (currentNumber)) {
+			previousResult = currentResult;
+			firstOperand = previousResult;
+			currentOperator = operation;
+			secondOperand = parseFloat(currentNumber);
+			currentResult = operate(firstOperand, secondOperand, currentOperator);
+			resetOperators();
+			currentNumber = '';
+		} else if ((currentResult) && (!currentNumber)){
+			previousResult = currentResult;
+			firstOperand = previousResult;
+			currentOperator = operation;
+			currentNumber = '';
+		} else if ((firstOperand) && (!currentResult) && (currentNumber)) {
+			currentOperator = operation;
+			secondOperand = parseFloat(currentNumber);
+			currentResult = operate(firstOperand, secondOperand, currentOperator);
+			resetOperators();
+		} else if ((firstOperand) && (!currentResult) && (!currentNumber)) {
+			currentOperator = operation;
+		} else if ((currentNumber) && (!firstOperand) && (!secondOperand)) {
+			firstOperand = parseFloat(currentNumber);
+			currentOperator = operation;
+			currentNumber = '';
+		} else if ((!currentNumber) && (!firstOperand) && (!secondOperand)) {
+			return;
+		}
+	} else if (previousResult) {
+		// check if there is a current number or first/second operand or current result
+		currentOperator = operation;
+		if (currentNumber) {
+			firstOperand = previousResult;
+			secondOperand = parseFloat(currentNumber);
+			currentResult = operate(firstOperand, secondOperand, currentOperator);
+			previousResult = currentResult;
+			currentNumber = '';
+			resetOperators();
+		} else if (!currentNumber) {
+			return;
+		}
+	}
 }
 
-function displayButtonHandler (event) {
-    let operation = event.target.textContent;
-
-    // equals (should largely concern the current result variable)
-    if (operation == '=') {
-        // if there is no previous result
-        if (previousResult == '' || previousResult == undefined) {
-            if (secondOperand != undefined || secondOperand != '') {
-                currentResult = operate(firstOperand, secondOperand, currentOperator);
-                previousResult = currentResult;
-                firstOperand = '';
-                secondOperand = '';
-                currentOperator = '';
-                currentResult = '';
-                currentNumber = '';
-                viewVariables();
-            } else if (secondOperand == undefined || secondOperand == '') {
-                if ((currentNumber != undefined) && (currentNumber != '')) {
-                    secondOperand = parseFloat(currentNumber);
-                    currentResult = operate(firstOperand, secondOperand, currentOperator);
-                    previousResult = currentResult;
-                    currentNumber = '';
-                    currentResult = '';
-                    firstOperand = '';
-                    secondOperand = '';
-                    currentOperator = '';
-                    viewVariables();
-                } else {
-                    currentResult = firstOperand;
-                    previousResult = currentResult;
-                    currentResult = '';
-                    firstOperand = '';
-                    viewVariables();
-                }
-            } else if (firstOperand == undefined || firstOperand == '') {
-                if ((currentNumber != undefined) && (currentNumber != '')) {
-                    firstOperand = parseFloat(currentNumber);
-                    currentResult = firstOperand;
-                    previousResult = currentResult;
-                    currentNumber = '';
-                    currentResult = '';
-                    firstOperand = '';
-                    viewVariables();
-                } else {
-                    viewVariables();
-                    return;
-                }
-            }
-        }
-        // if there is a previous result
-        else if (previousResult != '' && previousResult != undefined) {
-            viewVariables();
-            previousResult = firstOperand;
-            // if there is an active operator
-            if ((currentOperator != '') && (currentOperator != undefined)) {
-                if (secondOperand != '' && secondOperand != undefined) {
-                    currentResult = operate(firstOperand, secondOperand, currentOperator);
-                    previousResult = currentResult;
-                    currentResult = '';
-                    currentNumber = '';
-                    firstOperand = '';
-                    secondOperand = '';
-                    currentOperator = '';
-                    viewVariables();
-                } else if (((secondOperand == '') && (secondOperand == undefined)) && ((currentNumber != '') && (currentNumber != undefined))) {
-                    secondOperand = parseFloat(currentNumber);
-                    currentResult = operate(firstOperand, secondOperand, currentOperator);
-                    previousResult = currentResult;
-                    currentResult = '';
-                    currentNumber = '';
-                    firstOperand = '';
-                    secondOperand = '';
-                    currentOperator = '';
-                    viewVariables();
-                } else if (((secondOperand == '') && (secondOperand == undefined)) && ((currentNumber == '') || (currentNumber == undefined))) {
-                    currentResult = firstOperand;
-                    previousResult = currentResult;
-                    currentNumber = '';
-                    currentResult = '';
-                    firstOperand = '';
-                    viewVariables();
-                } 
-            } else if (((firstOperand == '') && (firstOperand == undefined)) && ((currentNumber != '') && (currentNumber != undefined))) {
-                firstOperand = parseFloat(currentNumber);
-                currentResult = firstOperand;
-                previousResult = currentResult;
-                currentNumber = '';
-                currentResult = '';
-                firstOperand = '';
-                viewVariables();
-            } else if (((firstOperand == '') && (firstOperand == undefined)) && ((currentNumber == '') || (currentNumber == undefined))) {
-                viewVariables();
-                return;
-            }
-        }
-    }
-    // positive-negative
-    if (operation == '+/-') {
-        if ((currentNumber != undefined) && (currentNumber != '')) {
-            currentNumber = `${parseFloat(currentNumber) * -1}`;
-        } else {
-            return;
-        }
-        viewVariables();
-    }
-
-    // dot
-    if (operation == '.') {
-        if ((currentNumber != undefined) && (currentNumber != '')) {
-            if (currentNumber.includes('.')) {
-                return;
-            } else {
-                currentNumber = currentNumber + '.';
-            }
-        } else {
-            return;
-        }
-        viewVariables();
-    }
-
-    // clear entry
-    if (operation = 'clear entry') {
-        if ((currentNumber != undefined) && (currentNumber != '')) {
-            currentNumber = currentNumber.slice(0, currentNumber.length - 2);
-        } else {
-            return;
-        }
-        viewVariables();
-    }
-
-    // clear all
-    if (operation = 'clear all') {
-        currentNumber = '';
-        firstOperand = '';
-        secondOperand = '';
-        currentOperator = '';
-        currentResult = '';
-        previousResult = '';
-        // update display later
-        viewVariables();
-    }
+function displayButtonHandler (e) {
+	let buttonFunction = e.target.textContent;
+	
+	// equals
+	if (buttonFunction === '=') {
+		if ((firstOperand) && (secondOperand) && (currentOperator)) {
+			currentResult = operate(firstOperand, secondOperand, currentOperator);
+			resetOperators();
+		} else if ((firstOperand) && (!secondOperand) && (currentOperator)) {
+			if (currentNumber) {
+				secondOperand = parseFloat(currentNumber);
+				currentResult = operate(firstOperand, secondOperand, currentOperator);
+				resetOperators();
+			} else {
+				currentResult = firstOperand;
+				previousResult = currentResult;
+				resetOperators();
+				currentNumber = '';
+			}
+		} else if ((!firstNumber) && (!secondNumber) && (!currentOperator)) {
+			if (currentNumber) {
+				currentResult = parseFloat(currentNumber);
+				currentNumber = '';
+			} else {
+				return;
+			}
+		}
+	}
+	
+	// positive/negative
+	if (buttonFunction === '+/-') {
+		if (currentNumber) {
+			currentNumber = `${((parseFloat(currentNumber)) * -1)}`;
+		} else {
+			return;
+		}
+	}
+	
+	// dot
+	if (buttonFunction === '.') {
+		if (currentNumber) {
+			if (!(currentNumber.includes('.'))) {
+				currentNumber = currentNumber + '.';
+			} else {
+				return;
+			}
+		} else {
+			return;
+		}
+	}
+	
+	// clear entry
+	if (buttonFunction === 'clear entry') {
+		if (currentNumber) {
+			currentNumber = currentNumber.slice(0, (currentNumber.length - 2));
+		} else {
+			return;
+		}
+	}
+	
+	// clear all
+	if (buttonFunction === 'clear all') {
+		currentNumber = '';
+		currentResult = '';
+		previousResult = '';
+		resetOperators();
+	}
 }
 
 operatorButtons.forEach((button) => {
@@ -250,15 +176,3 @@ operatorButtons.forEach((button) => {
 displayButtons.forEach((button) => {
     button.addEventListener('click', displayButtonHandler);
 })
-
-function viewVariables () {
-    let variables = {
-        current_number: currentNumber,
-        current_result: currentResult,
-        previous_result: previousResult,
-        first_operand: firstOperand,
-        second_operand: secondOperand,
-        current_operator: currentOperator,
-    };
-    console.table(variables)
-}
