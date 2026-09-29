@@ -229,7 +229,7 @@ function displayButtonHandler (e) {
 	}
 	
 	// clear entry
-	if (buttonFunction === 'Backspace') {
+	if (buttonFunction === 'CE') {
 		if (isCurrentNumber()) {
 			currentNumber = currentNumber.slice(0, (currentNumber.length - 1));
 		} else {
@@ -238,7 +238,7 @@ function displayButtonHandler (e) {
 	}
 	
 	// clear all
-	if (buttonFunction === 'Clear') {
+	if (buttonFunction === 'AC') {
 		currentNumber = '';
 		currentResult = '';
 		previousResult = '';
