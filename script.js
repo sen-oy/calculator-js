@@ -7,12 +7,14 @@ const displayButtons = document.querySelectorAll('.display-button');
 
 // operate function
 function operate (operandA, operandB, operator) {
-    if (!operator || !operandA || !operandB) {
+    if (((operator === undefined) || (operator === '')) ||
+        ((operandA === undefined) || (operandA === '')) || 
+        ((operandB === undefined) || (operandB === ''))) {
         return;
     }
 
     if (operator === '÷') {
-        if (operandB === 0){
+        if (operandB == 0){
             console.log('Good job wise guy.')
             return 1;
         } else {
@@ -42,12 +44,70 @@ function resetOperators () {
     firstOperand = '';
     secondOperand = '';
     currentOperator = '';
+    currentNumber = '';
+    currentResult = '';
+}
+
+// function to update the displays 
+function updateDisplays () {
+    upperDisplay.textContent = `= ${previousResult}`;
+    mainDisplay.textContent = currentNumber;
+}
+
+// functions to check if a variable is blank 
+function isCurrentNumber () {
+    if ((currentNumber === '') || (currentNumber === undefined)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function isFirstOperand () {
+    if ((firstOperand === '') || (firstOperand === undefined)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function isSecondOperand () {
+    if ((secondOperand === '') || (secondOperand === undefined)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function isCurrentResult () {
+    if ((currentResult === '') || (currentResult === undefined)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function isPreviousResult () {
+    if ((previousResult === '') || (previousResult === undefined)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function isCurrentOperator () {
+    if ((currentOperator === '') || (currentOperator === undefined)) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 // get numbers from number buttons
 numberButtons.forEach((button) => {
     button.addEventListener('click', (event) => {
         currentNumber += event.target.textContent;
+        updateDisplays();
         console.log(`current number: ${currentNumber}`);
     })
 })
@@ -55,49 +115,53 @@ numberButtons.forEach((button) => {
 function operatorButtonHandler (e) {
 	let operation = e.target.textContent; // places the operator in a variable
 	// if there is no previous result => this is a first calculation
-	if (!previousResult) {
+	if (!isPreviousResult()) {
 		// check if there is a current number or first operand or current result
-		if ((currentResult) && (currentNumber)) {
+		if ((isCurrentResult()) && (isCurrentNumber())) {
 			previousResult = currentResult;
 			firstOperand = previousResult;
 			currentOperator = operation;
 			secondOperand = parseFloat(currentNumber);
 			currentResult = operate(firstOperand, secondOperand, currentOperator);
+            previousResult = currentResult;
 			resetOperators();
-			currentNumber = '';
-		} else if ((currentResult) && (!currentNumber)){
+		} else if ((isCurrentResult()) && (!isCurrentNumber())){
 			previousResult = currentResult;
 			firstOperand = previousResult;
 			currentOperator = operation;
 			currentNumber = '';
-		} else if ((firstOperand) && (!currentResult) && (currentNumber)) {
-			currentOperator = operation;
+		} else if ((isFirstOperand()) && (!isCurrentResult()) && (isCurrentNumber())) {
 			secondOperand = parseFloat(currentNumber);
 			currentResult = operate(firstOperand, secondOperand, currentOperator);
+            previousResult = currentResult;
 			resetOperators();
-		} else if ((firstOperand) && (!currentResult) && (!currentNumber)) {
+            currentOperator = operation;
+		} else if ((isFirstOperand()) && (!isCurrentResult()) && (!isCurrentNumber())) {
 			currentOperator = operation;
-		} else if ((currentNumber) && (!firstOperand) && (!secondOperand)) {
+		} else if ((isCurrentNumber()) && (!isFirstOperand()) && (!isSecondOperand())) {
 			firstOperand = parseFloat(currentNumber);
 			currentOperator = operation;
 			currentNumber = '';
-		} else if ((!currentNumber) && (!firstOperand) && (!secondOperand)) {
+		} else if ((!isCurrentNumber()) && (!isFirstOperand()) && (!isSecondOperand())) {
 			return;
 		}
-	} else if (previousResult) {
+	} else if (isPreviousResult()) {
 		// check if there is a current number or first/second operand or current result
-		currentOperator = operation;
-		if (currentNumber) {
+		// currentOperator = operation;
+		if (isCurrentNumber()) {
 			firstOperand = previousResult;
 			secondOperand = parseFloat(currentNumber);
 			currentResult = operate(firstOperand, secondOperand, currentOperator);
 			previousResult = currentResult;
-			currentNumber = '';
 			resetOperators();
-		} else if (!currentNumber) {
+            currentOperator = operation;
+		} else if (!isCurrentNumber()) {
+            currentOperator = operation;
 			return;
 		}
 	}
+    updateDisplays();
+    reviewCurrentVariables();
 }
 
 function displayButtonHandler (e) {
@@ -105,33 +169,46 @@ function displayButtonHandler (e) {
 	
 	// equals
 	if (buttonFunction === '=') {
-		if ((firstOperand) && (secondOperand) && (currentOperator)) {
+		if ((isFirstOperand()) && (isSecondOperand()) && (isCurrentOperator())) {
 			currentResult = operate(firstOperand, secondOperand, currentOperator);
+            previousResult = currentResult;
 			resetOperators();
-		} else if ((firstOperand) && (!secondOperand) && (currentOperator)) {
+		} else if ((isFirstOperand()) && (!isSecondOperand()) && (isCurrentOperator())) {
 			if (currentNumber) {
 				secondOperand = parseFloat(currentNumber);
 				currentResult = operate(firstOperand, secondOperand, currentOperator);
+                previousResult = currentResult;
 				resetOperators();
 			} else {
 				currentResult = firstOperand;
 				previousResult = currentResult;
 				resetOperators();
-				currentNumber = '';
 			}
-		} else if ((!firstNumber) && (!secondNumber) && (!currentOperator)) {
-			if (currentNumber) {
+		} else if ((!isFirstOperand()) && (!isSecondOperand()) && (!isCurrentOperator())) {
+			if (isCurrentNumber()) {
 				currentResult = parseFloat(currentNumber);
+                previousResult = currentResult;
 				currentNumber = '';
-			} else {
-				return;
-			}
-		}
+			} 
+		} else if (isPreviousResult()) {
+            firstOperand = previousResult;
+            if ((isCurrentOperator()) && (isCurrentNumber())) {
+                
+                    secondOperand = parseFloat(currentNumber);
+                    currentResult = operate(firstOperand, secondOperand, currentOperator);
+                    previousResult = currentResult;
+                    resetOperators();
+            } else {
+                    currentOperator = '';
+                }
+		} else {
+			return;
+        }
 	}
 	
 	// positive/negative
 	if (buttonFunction === '+/-') {
-		if (currentNumber) {
+		if (isCurrentNumber()) {
 			currentNumber = `${((parseFloat(currentNumber)) * -1)}`;
 		} else {
 			return;
@@ -140,7 +217,7 @@ function displayButtonHandler (e) {
 	
 	// dot
 	if (buttonFunction === '.') {
-		if (currentNumber) {
+		if (isCurrentNumber()) {
 			if (!(currentNumber.includes('.'))) {
 				currentNumber = currentNumber + '.';
 			} else {
@@ -152,21 +229,24 @@ function displayButtonHandler (e) {
 	}
 	
 	// clear entry
-	if (buttonFunction === 'clear entry') {
-		if (currentNumber) {
-			currentNumber = currentNumber.slice(0, (currentNumber.length - 2));
+	if (buttonFunction === 'Backspace') {
+		if (isCurrentNumber()) {
+			currentNumber = currentNumber.slice(0, (currentNumber.length - 1));
 		} else {
 			return;
 		}
 	}
 	
 	// clear all
-	if (buttonFunction === 'clear all') {
+	if (buttonFunction === 'Clear') {
 		currentNumber = '';
 		currentResult = '';
 		previousResult = '';
 		resetOperators();
 	}
+    // view variables
+    updateDisplays();
+    reviewCurrentVariables();
 }
 
 operatorButtons.forEach((button) => {
@@ -176,3 +256,12 @@ operatorButtons.forEach((button) => {
 displayButtons.forEach((button) => {
     button.addEventListener('click', displayButtonHandler);
 })
+
+function reviewCurrentVariables () {
+    console.log(`current number: ${currentNumber}`);
+    console.log(`first operand: ${firstOperand}`);
+    console.log(`current operator: ${currentOperator}`);
+    console.log(`second operand: ${secondOperand}`);
+    console.log(`current result: ${currentResult}`);
+    console.log(`previous result: ${previousResult}`);
+}
