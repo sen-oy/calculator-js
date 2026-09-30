@@ -51,7 +51,7 @@ function resetOperators () {
 // function to update the displays 
 function updateDisplays () {
     upperDisplay.textContent = `= ${previousResult}`;
-    mainDisplay.textContent = currentNumber;
+    mainDisplay.textContent = `${currentNumber} ${currentOperator}`;
 }
 
 // functions to check if a variable is blank 
@@ -193,14 +193,16 @@ function displayButtonHandler (e) {
 		} else if (isPreviousResult()) {
             firstOperand = previousResult;
             if ((isCurrentOperator()) && (isCurrentNumber())) {
-                
-                    secondOperand = parseFloat(currentNumber);
-                    currentResult = operate(firstOperand, secondOperand, currentOperator);
-                    previousResult = currentResult;
-                    resetOperators();
+                secondOperand = parseFloat(currentNumber);
+                currentResult = operate(firstOperand, secondOperand, currentOperator);
+                previousResult = currentResult;
+                resetOperators();
+            } else if ((isCurrentNumber()) && (!isCurrentOperator)) {
+                currentOperator = '';
+                previousResult = parseFloat(currentNumber);
             } else {
-                    currentOperator = '';
-                }
+                return;
+            }
 		} else {
 			return;
         }
