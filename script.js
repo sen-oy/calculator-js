@@ -18,16 +18,16 @@ function operate (operandA, operandB, operator) {
             console.log('Good job wise guy.')
             return 1;
         } else {
-            return operandA / operandB;
+            return (operandA / operandB).toFixed(4);
         }
     } else if (operator === 'x') {
-        return operandA * operandB;
+        return (operandA * operandB).toFixed(4);
     } else if (operator === '-') {
-        return operandA - operandB;
+        return (operandA - operandB).toFixed(4);
     } else if (operator === '+') {
-        return operandA + operandB;
+        return (operandA + operandB).toFixed(4);
     } else if (operator === '%') {
-        return operandA % operandB;
+        return (operandA % operandB).toFixed(4);
     }
 }
 
@@ -51,7 +51,7 @@ function resetOperators () {
 // function to update the displays 
 function updateDisplays () {
     upperDisplay.textContent = `= ${previousResult}`;
-    mainDisplay.textContent = `${currentNumber} ${currentOperator}`;
+    mainDisplay.textContent = `${currentNumber}`;
 }
 
 // functions to check if a variable is blank 
@@ -103,6 +103,15 @@ function isCurrentOperator () {
     }
 }
 
+// function to remove active operator class from current operator
+function disableActiveOperator () {
+    for (let i = 0; i < operatorButtons.length; i++) {
+        if (operatorButtons[i].textContent === currentOperator) {
+            operatorButtons[i].classList.remove('active-operator');
+        }
+    }
+}
+
 // get numbers from number buttons
 numberButtons.forEach((button) => {
     button.addEventListener('click', (event) => {
@@ -112,8 +121,21 @@ numberButtons.forEach((button) => {
     })
 })
 
+document.addEventListener('keydown', (e) => {
+    let validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    let currentKey = e.key;
+    if (validKeys.includes(currentKey)) {
+        currentNumber += e.key;
+        updateDisplays();
+    } else {
+        return;
+    }
+}) 
+
 function operatorButtonHandler (e) {
 	let operation = e.target.textContent; // places the operator in a variable
+    disableActiveOperator();
+    e.target.classList.add('active-operator');
 	// if there is no previous result => this is a first calculation
 	if (!isPreviousResult()) {
 		// check if there is a current number or first operand or current result
@@ -124,6 +146,7 @@ function operatorButtonHandler (e) {
 			secondOperand = parseFloat(currentNumber);
 			currentResult = operate(firstOperand, secondOperand, currentOperator);
             previousResult = currentResult;
+            e.target.classList.remove('active-operator');
 			resetOperators();
 		} else if ((isCurrentResult()) && (!isCurrentNumber())){
 			previousResult = currentResult;
@@ -169,6 +192,7 @@ function displayButtonHandler (e) {
 	
 	// equals
 	if (buttonFunction === '=') {
+        disableActiveOperator();
 		if ((isFirstOperand()) && (isSecondOperand()) && (isCurrentOperator())) {
 			currentResult = operate(firstOperand, secondOperand, currentOperator);
             previousResult = currentResult;
