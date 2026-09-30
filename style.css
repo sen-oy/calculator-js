@@ -103,8 +103,9 @@ button {
     cursor: pointer;
 }
 
-.display-button {
+.display-button:hover {
     cursor: pointer;
+    background-color: darkgray;
 }
 
 .active-operator {
