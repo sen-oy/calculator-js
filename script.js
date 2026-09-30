@@ -39,6 +39,7 @@ let currentOperator = '';
 let currentResult = '';
 let previousResult = '';
 
+// helper functions
 // a function to reset operators
 function resetOperators () {
     firstOperand = '';
@@ -117,7 +118,6 @@ numberButtons.forEach((button) => {
     button.addEventListener('click', (event) => {
         currentNumber += event.target.textContent;
         updateDisplays();
-        console.log(`current number: ${currentNumber}`);
     })
 })
 
@@ -133,7 +133,7 @@ document.addEventListener('keydown', (e) => {
 }) 
 
 function operatorButtonHandler (e) {
-	let operation = e.target.textContent; // places the operator in a variable
+	let operation = e.target.textContent; 
     disableActiveOperator();
     e.target.classList.add('active-operator');
 	// if there is no previous result => this is a first calculation
@@ -170,7 +170,6 @@ function operatorButtonHandler (e) {
 		}
 	} else if (isPreviousResult()) {
 		// check if there is a current number or first/second operand or current result
-		// currentOperator = operation;
 		if (isCurrentNumber()) {
 			firstOperand = previousResult;
 			secondOperand = parseFloat(currentNumber);
@@ -270,9 +269,7 @@ function displayButtonHandler (e) {
 		previousResult = '';
 		resetOperators();
 	}
-    // view variables
     updateDisplays();
-    reviewCurrentVariables();
 }
 
 operatorButtons.forEach((button) => {
@@ -282,12 +279,3 @@ operatorButtons.forEach((button) => {
 displayButtons.forEach((button) => {
     button.addEventListener('click', displayButtonHandler);
 })
-
-function reviewCurrentVariables () {
-    console.log(`current number: ${currentNumber}`);
-    console.log(`first operand: ${firstOperand}`);
-    console.log(`current operator: ${currentOperator}`);
-    console.log(`second operand: ${secondOperand}`);
-    console.log(`current result: ${currentResult}`);
-    console.log(`previous result: ${previousResult}`);
-}
