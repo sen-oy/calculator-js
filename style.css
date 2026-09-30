@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
 * {
     margin: 0px;
     padding: 0px;
@@ -17,35 +20,59 @@ body {
     align-items: center;
     width: 400px;
     height: 800px;
-    padding: 50px;
+    padding: 20px;
     border-style: solid;
     border-width: thin;
     margin: 2rem;
+    border-radius: 0.75rem;
 }
 
 #calculator-display {
     display: flex;
     flex-direction: column;
-    width: 300px;
+    width: 350px;
     padding: 25px;
     height: 200px;
     justify-content: center;
     align-items: center;
     border-style: solid;
     border-width: thin;
-    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    font-size: 2rem;
+}
+
+.calculator-sub-display {
+    width: 350px;
+    height: 100px;
+    padding: 1.5rem;
+}
+
+#calculator-upper-display {
+    text-align: start;
+}
+
+#calculator-main-display {
+    text-align: end;
 }
 
 #calculator-buttons {
     display: flex; 
     flex-flow: row wrap;
-    width: 300px;
+    width: 350px;
     height: 600px;
     gap: 1rem;
     justify-content: center;
+    align-content: space-evenly;
+}
+
+#calculator-buttons button {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1.5rem;
+    text-align: center;
 }
 
 button {
-    width: 60px;
-    height: 75px;
+    width: 70px;
+    height: 70px;
 }
