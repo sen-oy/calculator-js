@@ -25,6 +25,7 @@ body {
     border-width: thin;
     margin: 2rem;
     border-radius: 0.75rem;
+    background-color: #fbfbfb;
 }
 
 #calculator-display {
@@ -40,6 +41,8 @@ body {
     border-radius: 0.25rem;
     font-family: 'Inter', 'Roboto', sans-serif;
     font-size: 2rem;
+    background-color: #efede3;
+    overflow: scroll;
 }
 
 .calculator-sub-display {
@@ -75,4 +78,36 @@ body {
 button {
     width: 70px;
     height: 70px;
+    border-radius: 0.5rem;
+}
+
+.number-button {
+    background-color: #babde2;
+    color: #374375;
+}
+
+.number-button:hover {
+    background-color: #374375;
+    color: #babde2;
+    cursor: pointer;
+}
+
+.operator-button {
+    background-color: #dfaea1;
+    color: #fffcf5;
+}
+
+.operator-button:hover {
+    background-color: #895159;
+    color: #fffcf5;
+    cursor: pointer;
+}
+
+.display-button {
+    cursor: pointer;
+}
+
+.active-operator {
+    background-color: #895159;
+    color: #fffcf5;
 }
